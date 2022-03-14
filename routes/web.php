@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\MainController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +18,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/login', 'App\Http\Controllers\MainController@index');
+Route::get('/logout', 'App\Http\Controllers\MainController@logout');
+Route::post('/main/checklogin', 'App\Http\Controllers\MainController@checklogin');
+Route::get('main/successlogin', 'App\Http\Controllers\MainController@successlogin');
+Route::get('dashboard', 'App\Http\Controllers\AdminController@dashboard');
+Route::get('/company/manage', 'App\Http\Controllers\CompanyController@manage');
