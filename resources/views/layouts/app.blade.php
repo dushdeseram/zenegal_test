@@ -2,6 +2,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Zenegal Test</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
@@ -13,7 +14,7 @@
     <link rel="stylesheet" href="{{ asset('templates/vendors/css/vendor.bundle.base.css') }}">
     
     <link rel="stylesheet" href="{{ asset('templates/css/style.css') }}">
-
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -111,25 +112,104 @@
         </footer>
     </div>
 
-    <div class="modal fade common_modal" id="common_modal" tabindex="-1" role="dialog" aria-labelledby="common_modal_label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div  id="lcsCommonModal" class="lcs-common-modal modal fade">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="common_modal_label">Modal title</h5>
-                    <button type="button" class="close" onclick="hide_modal(this)">
-                            <span>&times;</span>
+                    <h4 class="modal-title">Default Modal</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-
+                    <p>One fine body&hellip;</p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  
                 </div>
             </div>
+            <!-- /.modal-content -->
         </div>
+        <!-- /.modal-dialog -->
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+
+    <script type="text/javascript">
+        function load_modal(heading,content,width = false, height = false, clone_previous = false,keep_window_object = false,close_callback = false){
+    
+    $('.lcs-common-modal').removeClass('last-opened-modal');
+    $('.lcs-common-modal').removeClass('current-opened-modal');
+    $('.lcs-common-modal').first().next('lcs-common-modal').addClass('last-opened-modal');
+
+    var modal_clone_id = 'lcsCommonModal_' + heading.replace(/[#|_|;\\/:*?\"<>|&'()~]/g, '').replace(/ /g, '_').toLowerCase();
+    var already_exist = false;
+
+    if($('#' + modal_clone_id).length > 0){
+     var  already_exist = true;
+    }else{
+      var clone_modal = $('#lcsCommonModal').clone();
+      $(clone_modal).attr('id',modal_clone_id);
+      $('#lcsCommonModal').after(clone_modal);
+    }
+
+    if(width){
+      $('#' + modal_clone_id + '.modal-dialog').css('min-width',width);
+    }
+    if(height){
+      $('#' + modal_clone_id + '.modal-dialog').css('height',height);
+    }
+
+    $('#' + modal_clone_id).on('.hidden.bs.modal',function(){
+      
+      if($('.lcs-common-modal').not(":hidden").length > 0){
+        $('body').addClass('model-open');
+      }
+
+      if(!keep_window_object){
+        $('#' + modal_clone_id).remove();
+      }
+
+      if(close_callback){
+        if(typeof close_callback === "function"){
+          close_callback();
+        }
+      }
+
+
+    });
+
+    if(clone_previous && !already_exist){
+      $('.last-opened-modal').remove();
+    }
+
+    if(!already_exist){
+      var tmp_keep_window_object = false;
+    }else{
+      var tmp_keep_window_object = keep_window_object;
+    }
+
+    $('#' + modal_clone_id).find("*").each(function () {
+        if (($(this).is('input[type="button"]') || $(this).is("button")) || ($(this).is('input[type="a"]') || $(this).is("a"))) {
+            $(this).attr("modal-div-id", modal_clone_id);
+        }
+    });
+
+    if (!tmp_keep_window_object) {
+      $('#' + modal_clone_id + ' .modal-title').html('');
+      $('#' + modal_clone_id + ' .modal-body').html('');
+      $('#' + modal_clone_id + ' .modal-title').html("<div class='modal-heading'>" + heading + "</div>");
+      $('#' + modal_clone_id + ' .modal-body').html(content);
+    }
+
+
+    $('#' + modal_clone_id).modal({backdrop: 'static',keyboard: false});
+    $('#' + modal_clone_id).modal('show'); 
+  }
+    </script>
 
 </body>
 
