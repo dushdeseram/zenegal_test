@@ -14,37 +14,43 @@
                     <div class="col-lg-12">
                         <div class="row mt-3">
                             <div class="col-sm-12">
-                                <a type="button" class="btn btn-success" onclick="add_company();">Add New</a>
+                                <a type="button" class="btn btn-success" onclick="add_employee();">Add New</a>
                             </div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-sm-12">
-                                <table class="table table-bordered" id="tableCompanies">
+                                <table class="table table-bordered" id="tableeEmployees">
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Logo</th>
-                                            <th>Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Company</th>
                                             <th>Email</th>
-                                            <th>Website</th>
+                                            <th>Phone</th>
                                             <th style="width: 100px;">Action</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
                                         <?php  $x = 0;?>
-                                        @foreach ($companies as $company)
+                                        @foreach ($employees as $employee)
                                         <?php $x++;?>
                                         <tr>
-                                            <td>{{ (($companies->firstItem() + $loop->index)) }}</td>
-                                            <td></td>
-                                            <td><?php echo $company->name;?></td>
-                                            <td><?php echo $company->email;?></td>
-                                            <td><?php echo $company->website;?></td>
+                                            <td>{{ (($employees->firstItem() + $loop->index)) }}</td>
+                                            <td><?php echo $employee->first_name;?></td>
+                                            <td><?php echo $employee->last_name;?></td>
+                                            <td>
+                                                <?php $company= $CompanyModel->get_company_by_company_id($employee->company_id);
+                                                    echo $company->name;
+                                                ?>
+                                            </td>
+                                            <td><?php echo $employee->email;?></td>
+                                            <td><?php echo $employee->phone;?></td>
                                             <td width="100px">
-                                                <a onclick="view_company(<?php echo $company->id;?>);"><img src="{{ asset('images/png/view.png') }}"  width="15px"/></a>&nbsp;&nbsp;
-                                                <a onclick="update_company(<?php echo $company->id;?>);"><img src="{{ asset('images/png/edit.png') }}"  width="15px"/></a>&nbsp;&nbsp;
-                                                <a onclick="delete_company(<?php echo $company->id;?>);"><img src="{{ asset('images/png/delete.png') }}"  width="15px"/></a>&nbsp;&nbsp;
+                                                <a onclick="view_employee(<?php echo $employee->id;?>);"><img src="{{ asset('images/png/view.png') }}"  width="15px"/></a>&nbsp;&nbsp;
+                                                <a onclick="update_employee(<?php echo $employee->id;?>);"><img src="{{ asset('images/png/edit.png') }}"  width="15px"/></a>&nbsp;&nbsp;
+                                                <a onclick="delete_employee(<?php echo $employee->id;?>);"><img src="{{ asset('images/png/delete.png') }}"  width="15px"/></a>&nbsp;&nbsp;
                                             </td>
                                         </tr>
                                         @endforeach
@@ -57,7 +63,7 @@
                                         </tr>
                                     </tfoot>
                                 </table>
-                                {{$companies->links("pagination::bootstrap-5")}}
+                                {{$employees->links("pagination::bootstrap-5")}}
                                 
                             </div>
                         </div>
@@ -77,14 +83,14 @@
         }
     });*/
 
-    function add_company() {
+    function add_employee() {
         
         $.ajax({
             type:'POST',
-            url: "{{URL::to('company/addcompanyajax')}}",
+            url: "{{URL::to('employee/addemployeeajax')}}",
             data: {"_token": "{{ csrf_token() }}"},
             success: function(content) {
-                load_modal('Add Company',content.element);
+                load_modal('Add Employee',content.element);
             },
             error: function(){
 
@@ -93,14 +99,14 @@
 
     }
 
-    function view_company(company_id) {
+    function view_employee(employee_id) {
         
         $.ajax({
             type:'POST',
-            url: "{{URL::to('company/viewcompanyajax')}}",
-            data: {"_token": "{{ csrf_token() }}",company_id:company_id},
+            url: "{{URL::to('employee/viewemployeeajax')}}",
+            data: {"_token": "{{ csrf_token() }}",employee_id:employee_id},
             success: function(content) {
-                load_modal('View Company',content.element);
+                load_modal('View Employee',content.element);
             },
             error: function(){
 
@@ -109,14 +115,14 @@
 
     }
 
-    function update_company(company_id) {
+    function update_employee(employee_id) {
         
         $.ajax({
             type:'POST',
-            url: "{{URL::to('company/updatecompanyajax')}}",
-            data: {"_token": "{{ csrf_token() }}",company_id:company_id},
+            url: "{{URL::to('employee/updateemployeeajax')}}",
+            data: {"_token": "{{ csrf_token() }}",employee_id:employee_id},
             success: function(content) {
-                load_modal('Update Company',content.element);
+                load_modal('Update Employee',content.element);
             },
             error: function(){
 
@@ -125,12 +131,12 @@
 
     }
 
-    function delete_company(company_id) {
+    function delete_employee(employee_id) {
         
         $.ajax({
             type:'POST',
-            url: "{{URL::to('company/deletecompanyprocess')}}",
-            data: {"_token": "{{ csrf_token() }}",company_id:company_id},
+            url: "{{URL::to('employee/deleteemployeeprocess')}}",
+            data: {"_token": "{{ csrf_token() }}",employee_id:employee_id},
             success: function(content) {
                 if(content==1){
                     $('#tableMessage').html('<div class="alert alert-success">Data deleted successfully</div>');
